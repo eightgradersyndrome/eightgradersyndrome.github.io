@@ -46,19 +46,17 @@ button {
 
 <input type="number" id="guess" placeholder="輸入數字">
 <button onclick="checkGuess()">猜！</button>
-
+<button onclick="restartGame()">🔄 再來一局</button>
+    
 <p id="result"></p>
 
 <script>
 let answer = Math.floor(Math.random() * 100) + 1;
-
 let min = 1;
 let max = 100;
-
 let currentPlayer = 1;
 
 function checkGuess() {
-
     let guess = Number(document.getElementById("guess").value);
 
     if (guess <= min || guess >= max) {
@@ -89,7 +87,20 @@ function checkGuess() {
 
     document.getElementById("guess").value = "";
 }
-</script>
 
-</body>
-</html>
+function restartGame() {
+    answer = Math.floor(Math.random() * 100) + 1;
+    min = 1;
+    max = 100;
+    currentPlayer = 1;
+
+    document.getElementById("range").innerText =
+        "範圍：1 ~ 100";
+
+    document.getElementById("turn").innerText =
+        "輪到玩家1";
+
+    document.getElementById("result").innerText = "";
+
+    document.getElementById("guess").value = "";
+}
