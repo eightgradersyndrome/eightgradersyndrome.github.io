@@ -3,123 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<h1>🐘 大象終極密碼 🐘</h1>
-    <p>歡迎來到大象的猜數字樂園！🌿</p>
-<link rel="icon" href="https://stickershop.line-scdn.net/stickershop/v1/product/6287/LINEStorePC/main.png?v=1">
+<title>我的大象</title>
 
 <style>
-body {
-    font-family: "Microsoft JhengHei", sans-serif;
-    text-align: center;
-    background: linear-gradient(
-        to bottom,
-        #cfefff,
-        #e8f8ff
-    );
-    min-height: 100vh;
-}
-    .container {
-    background: white;
-    width: 420px;
-    margin: 50px auto;
-    padding: 30px;
-    border-radius: 25px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-    
-h1 {
-    color: #4a90e2;
+body{
+    font-family:"Microsoft JhengHei",sans-serif;
+    text-align:center;
+    background:linear-gradient(#cfefff,#ffffff);
+    padding:30px;
 }
 
-input {
-    padding: 10px;
-    font-size: 16px;
+.card{
+    max-width:500px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.15);
 }
 
-button {
-    background: #6ea8d9;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 10px 20px;
+.elephant{
+    font-size:100px;
 }
 
-button:hover {
-    background: #4e90cc;
+button{
+    padding:10px 20px;
+    margin:5px;
+    border:none;
+    border-radius:15px;
+    cursor:pointer;
+    background:#6ea8d9;
+    color:white;
+    font-size:16px;
 }
 
-#result {
-    margin-top: 20px;
-    font-size: 18px;
-    font-weight: bold;
+button:hover{
+    background:#4e90cc;
+}
+
+.status{
+    font-size:20px;
+    margin:10px;
+}
+
+#message{
+    font-weight:bold;
+    color:#ff6b81;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎮 終極密碼</h1>
+<div class="card">
 
-<p id="range">範圍：1 ~ 100</p>
-<p id="turn">輪到玩家1</p>
+<h1>🐘 我的大象 🐘</h1>
 
-<input type="number" id="guess" placeholder="輸入數字">
-<button onclick="checkGuess()">猜！</button>
-<button onclick="restartGame()">🔄 再來一局</button>
-    
-<p id="result"></p>
+<div class="elephant">🐘</div>
+
+<h2 id="name">小花</h2>
+
+<div class="status">❤️ 心情：<span id="mood">100</span></div>
+<div class="status">🍌 飽食度：<span id="hunger">100</span></div>
+<div class="status">😴 精力：<span id="energy">100</span></div>
+
+<p id="message">大象今天很開心！</p>
+
+<button onclick="feed()">🍌 餵香蕉</button>
+<button onclick="play()">🎾 玩球</button>
+<button onclick="sleepPet()">😴 睡覺</button>
+
+</div>
 
 <script>
-let answer = Math.floor(Math.random() * 100) + 1;
-let min = 1;
-let max = 100;
-let currentPlayer = 1;
+let mood = 100;
+let hunger = 100;
+let energy = 100;
 
-function checkGuess() {
-    let guess = Number(document.getElementById("guess").value);
+function updateStatus(){
+    document.getElementById("mood").innerText = mood;
+    document.getElementById("hunger").innerText = hunger;
+    document.getElementById("energy").innerText = energy;
 
-    if (guess <= min || guess >= max) {
-        document.getElementById("result").innerText =
-            "請輸入範圍內的數字！";
-        return;
-    }
+    let msg = "大象今天很開心！";
 
-    if (guess === answer) {
-        document.getElementById("result").innerText =
-            `🎉 玩家${currentPlayer} 猜中了！答案是 ${answer}`;
-        return;
-    }
+    if(hunger < 30) msg = "🐘 大象肚子餓了...";
+    if(energy < 30) msg = "🐘 大象好想睡覺...";
+    if(mood < 30) msg = "🐘 大象有點難過...";
 
-    if (guess < answer) {
-        min = guess;
-    } else {
-        max = guess;
-    }
-
-    document.getElementById("range").innerText =
-        `範圍：${min} ~ ${max}`;
-
-    currentPlayer = currentPlayer === 1 ? 2 : 1;
-
-    document.getElementById("turn").innerText =
-        `輪到玩家${currentPlayer}`;
-
-    document.getElementById("guess").value = "";
+    document.getElementById("message").innerText = msg;
 }
 
-function restartGame() {
-    answer = Math.floor(Math.random() * 100) + 1;
-    min = 1;
-    max = 100;
-    currentPlayer = 1;
-
-    document.getElementById("range").innerText =
-        "範圍：1 ~ 100";
-
-    document.getElementById("turn").innerText =
-        "輪到玩家1";
-
-    document.getElementById("result").innerText = "";
-
-    document.getElementById("guess").value = "";
+function feed(){
+    hunger = Math.min(hunger + 20,100);
+    mood = Math.min(mood + 5,100);
+    updateStatus();
 }
+
+function play(){
+    mood = Math.min(mood + 15,100);
+    hunger = Math.max(hunger - 10,0);
+    energy = Math.max(energy - 15,0);
+    updateStatus();
+}
+
+function sleepPet(){
+    energy = Math.min(energy + 25,100);
+    mood = Math.min(mood + 5,100);
+    updateStatus();
+}
+
+setInterval(() => {
+    hunger = Math.max(hunger - 1,0);
+    energy = Math.max(energy - 1,0);
+
+    if(hunger < 20 || energy < 20){
+        mood = Math.max(mood - 1,0);
+    }
+
+    updateStatus();
+},3000);
+
+updateStatus();
+</script>
+
+</body>
+</html>
