@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我的大象</title>
+<title>大家一起溜大象</title>
 
 <style>
 body{
@@ -17,7 +17,7 @@ body{
     max-width:500px;
     margin:auto;
     background:white;
-    padding:25px;
+    padding:30px;
     border-radius:25px;
     box-shadow:0 5px 15px rgba(0,0,0,0.15);
 }
@@ -27,28 +27,22 @@ body{
 }
 
 button{
-    padding:10px 20px;
-    margin:5px;
+    padding:15px 25px;
     border:none;
     border-radius:15px;
-    cursor:pointer;
     background:#6ea8d9;
     color:white;
-    font-size:16px;
+    font-size:20px;
+    cursor:pointer;
 }
 
 button:hover{
     background:#4e90cc;
 }
 
-.status{
-    font-size:20px;
-    margin:10px;
-}
-
-#message{
-    font-weight:bold;
-    color:#ff6b81;
+.counter{
+    font-size:24px;
+    margin:15px;
 }
 </style>
 </head>
@@ -57,74 +51,72 @@ button:hover{
 
 <div class="card">
 
-<h1>🐘 我的大象 🐘</h1>
+<h1>🐘 大家一起溜大象 🐘</h1>
 
-<div class="elephant">🐘</div>
+<div id="elephant" class="elephant">🐘</div>
 
-<h2 id="name">小花</h2>
+<div class="counter">
+🌍 總共溜了：
+<span id="totalWalks">0</span> 次
+</div>
 
-<div class="status">❤️ 心情：<span id="mood">100</span></div>
-<div class="status">🍌 飽食度：<span id="hunger">100</span></div>
-<div class="status">😴 精力：<span id="energy">100</span></div>
+<div class="counter">
+👤 你溜了：
+<span id="myWalks">0</span> 次
+</div>
 
-<p id="message">大象今天很開心！</p>
+<button onclick="walkElephant()">
+🚶 溜大象
+</button>
 
-<button onclick="feed()">🍌 餵香蕉</button>
-<button onclick="play()">🎾 玩球</button>
-<button onclick="sleepPet()">😴 睡覺</button>
+<p id="message">
+大象正在等你帶牠散步！
+</p>
 
 </div>
 
 <script>
-let mood = 100;
-let hunger = 100;
-let energy = 100;
+let totalWalks =
+Number(localStorage.getItem("totalWalks")) || 0;
 
-function updateStatus(){
-    document.getElementById("mood").innerText = mood;
-    document.getElementById("hunger").innerText = hunger;
-    document.getElementById("energy").innerText = energy;
+let myWalks =
+Number(localStorage.getItem("myWalks")) || 0;
 
-    let msg = "大象今天很開心！";
+updateDisplay();
 
-    if(hunger < 30) msg = "🐘 大象肚子餓了...";
-    if(energy < 30) msg = "🐘 大象好想睡覺...";
-    if(mood < 30) msg = "🐘 大象有點難過...";
+function walkElephant(){
 
-    document.getElementById("message").innerText = msg;
-}
+    totalWalks++;
+    myWalks++;
 
-function feed(){
-    hunger = Math.min(hunger + 20,100);
-    mood = Math.min(mood + 5,100);
-    updateStatus();
-}
+    localStorage.setItem("totalWalks", totalWalks);
+    localStorage.setItem("myWalks", myWalks);
 
-function play(){
-    mood = Math.min(mood + 15,100);
-    hunger = Math.max(hunger - 10,0);
-    energy = Math.max(energy - 15,0);
-    updateStatus();
-}
+    updateDisplay();
 
-function sleepPet(){
-    energy = Math.min(energy + 25,100);
-    mood = Math.min(mood + 5,100);
-    updateStatus();
-}
+    const elephant = document.getElementById("elephant");
 
-setInterval(() => {
-    hunger = Math.max(hunger - 1,0);
-    energy = Math.max(energy - 1,0);
-
-    if(hunger < 20 || energy < 20){
-        mood = Math.max(mood - 1,0);
+    if(totalWalks >= 100){
+        elephant.innerText = "👑🐘";
     }
+    else if(totalWalks >= 50){
+        elephant.innerText = "🥳🐘";
+    }
+    else if(totalWalks >= 20){
+        elephant.innerText = "😆🐘";
+    }
+    else{
+        elephant.innerText = "🐘";
+    }
+}
 
-    updateStatus();
-},3000);
+function updateDisplay(){
+    document.getElementById("totalWalks").innerText = totalWalks;
+    document.getElementById("myWalks").innerText = myWalks;
 
-updateStatus();
+    document.getElementById("message").innerText =
+        `🐘 今天已經散步 ${totalWalks} 次啦！`;
+}
 </script>
 
 </body>
