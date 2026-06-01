@@ -1,11 +1,95 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset = "utf-8">
-    <title>XinTong</title>
-    <link rel="icon" href="https://stickershop.line-scdn.net/stickershop/v1/product/6287/LINEStorePC/main.png?v=1">
-  </head>
-  <body>
-      hello world
-  </body>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>終極密碼</title>
+<link rel="icon" href="https://stickershop.line-scdn.net/stickershop/v1/product/6287/LINEStorePC/main.png?v=1">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+    background: #f5f5f5;
+}
+
+h1 {
+    color: #4a90e2;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 終極密碼</h1>
+
+<p id="range">範圍：1 ~ 100</p>
+<p id="turn">輪到玩家1</p>
+
+<input type="number" id="guess" placeholder="輸入數字">
+<button onclick="checkGuess()">猜！</button>
+
+<p id="result"></p>
+
+<script>
+let answer = Math.floor(Math.random() * 100) + 1;
+
+let min = 1;
+let max = 100;
+
+let currentPlayer = 1;
+
+function checkGuess() {
+
+    let guess = Number(document.getElementById("guess").value);
+
+    if (guess <= min || guess >= max) {
+        document.getElementById("result").innerText =
+            "請輸入範圍內的數字！";
+        return;
+    }
+
+    if (guess === answer) {
+        document.getElementById("result").innerText =
+            `🎉 玩家${currentPlayer} 猜中了！答案是 ${answer}`;
+        return;
+    }
+
+    if (guess < answer) {
+        min = guess;
+    } else {
+        max = guess;
+    }
+
+    document.getElementById("range").innerText =
+        `範圍：${min} ~ ${max}`;
+
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+
+    document.getElementById("turn").innerText =
+        `輪到玩家${currentPlayer}`;
+
+    document.getElementById("guess").value = "";
+}
+</script>
+
+</body>
 </html>
