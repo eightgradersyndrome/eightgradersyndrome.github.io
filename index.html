@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧪 元素之域：千種化學式時間凍結版 v5.0</title>
+    <title>🧪 元素之域：千種化學式完美修復版 v5.1</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -118,7 +118,6 @@
             opacity: 0.4;
         }
 
-        /* 凍結倒數中的特別按鈕樣式 */
         button.cooldown {
             background-color: #21262d !important;
             color: #f0883e !important;
@@ -228,7 +227,7 @@
 <body>
 
     <h1>QUANTUM CHEMICAL GACHA</h1>
-    <div class="subtitle">🧪 元素之域 · 防速點時間凍結充能版 v5.0</div>
+    <div class="subtitle">🧪 元素之域 · 千種卡池修復版 v5.1</div>
 
     <div class="stats-panel">
         <div class="total-draws">總抽數：<span id="total-draws">0</span></div>
@@ -263,7 +262,7 @@
     </div>
 
     <script>
-        // 1. 千種魔王級卡池動態生成邏輯
+        // 1. 卡池資料動態生成
         const BASE_POOL = {
             SSR: [
                 { formula: "KMnO<sub>4</sub>", name: "高錳酸鉀" }, { formula: "KCN", name: "氰化鉀 (劇毒)" },
@@ -272,4 +271,5 @@
             ],
             SR: [
                 { formula: "H<sub>2</sub>SO<sub>4</sub>", name: "硫酸" }, { formula: "HCl", name: "鹽酸" },
-                { formula: "NaOH", name: "氫氧化鈉" }, { formula: "CaCO<sub>3</sub>", name: "碳酸鈣
+                { formula: "NaOH", name: "氫氧化鈉" }, { formula: "CaCO<sub>3</sub>", name: "碳酸鈣" },
+                { formula: "H<sub>2</sub>O<sub>2</sub>", name: "過氧化氫"
