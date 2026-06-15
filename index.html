@@ -1,123 +1,330 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>大家一起溜大象</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 元素之域：化學式抽卡模擬器</title>
+    <style>
+        /* 極簡科技風 CSS 樣式 */
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --text-color: #c9d1d9;
+            --ssr-color: #ff4500;
+            --ssr-glow: #ff7b00;
+            --sr-color: #a371f7;
+            --r-color: #58a6ff;
+        }
 
-<style>
-body{
-    font-family:"Microsoft JhengHei",sans-serif;
-    text-align:center;
-    background:linear-gradient(#cfefff,#ffffff);
-    padding:30px;
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.card{
-    max-width:500px;
-    margin:auto;
-    background:white;
-    padding:30px;
-    border-radius:25px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.15);
-}
+        h1 {
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
 
-.elephant{
-    font-size:100px;
-}
+        .subtitle {
+            color: #8b949e;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
 
-button{
-    padding:15px 25px;
-    border:none;
-    border-radius:15px;
-    background:#6ea8d9;
-    color:white;
-    font-size:20px;
-    cursor:pointer;
-}
+        /* 統計面板 */
+        .stats-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 15px 30px;
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
 
-button:hover{
-    background:#4e90cc;
-}
+        .stat-item span {
+            font-weight: bold;
+        }
+        .stat-ssr { color: var(--ssr-color); }
+        .stat-sr { color: var(--sr-color); }
+        .stat-r { color: var(--r-color); }
 
-.counter{
-    font-size:24px;
-    margin:15px;
-}
-</style>
+        /* 按鈕區 */
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        button {
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #30363d;
+            border-color: #8b949e;
+        }
+
+        button.primary {
+            background-color: #238636;
+            color: #ffffff;
+            border-color: #2ea44f;
+        }
+
+        button.primary:hover {
+            background-color: #2ea44f;
+        }
+
+        /* 卡片展示區 */
+        .result-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* 卡片樣式 */
+        .card {
+            background-color: var(--panel-bg);
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            width: 160px;
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 15px;
+            box-sizing: border-box;
+            position: relative;
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(15px); }
+        }
+
+        .card .rarity {
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .card .formula {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .card .name {
+            font-size: 0.85rem;
+            color: #8b949e;
+            text-align: center;
+        }
+
+        /* 不同稀有度的特殊外觀 */
+        .card.R { 
+            border-color: var(--r-color); 
+            box-shadow: 0 0 5px rgba(88, 166, 255, 0.1);
+        }
+        .card.R .rarity { color: var(--r-color); }
+
+        .card.SR { 
+            border-color: var(--sr-color); 
+            box-shadow: 0 0 10px rgba(163, 113, 247, 0.2);
+        }
+        .card.SR .rarity { color: var(--sr-color); }
+
+        .card.SSR { 
+            border-color: var(--ssr-color); 
+            box-shadow: 0 0 20px var(--ssr-glow);
+            animation: sscrGlow 2s infinite alternate, fadeIn 0.4s ease-out forwards;
+        }
+        .card.SSR .rarity { color: var(--ssr-color); text-shadow: 0 0 5px var(--ssr-glow); }
+
+        @keyframes sscrGlow {
+            from { box-shadow: 0 0 10px rgba(255, 69, 0, 0.5); }
+            to { box-shadow: 0 0 25px rgba(255, 123, 0, 0.8); }
+        }
+
+        sub {
+            font-size: 0.6em;
+            bottom: -0.1em;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="card">
+    <h1>CHEMICAL GACHA</h1>
+    <div class="subtitle">🧪 元素之域 · 化學式抽卡模擬器</div>
 
-<h1>🐘 大家一起溜大象 🐘</h1>
+    <div class="stats-panel">
+        <div class="stat-item">總抽數：<span id="total-draws">0</span></div>
+        <div class="stat-item stat-ssr">SSR：<span id="count-ssr">0</span></div>
+        <div class="stat-item stat-sr">SR：<span id="count-sr">0</span></div>
+        <div class="stat-item stat-r">R：<span id="count-r">0</span></div>
+    </div>
 
-<div id="elephant" class="elephant">🐘</div>
+    <div class="btn-container">
+        <button onclick="gacha(1)">單抽能量</button>
+        <button class="primary" onclick="gacha(10)">連結十連抽 (必中SR+)</button>
+        <button onclick="resetStats()">重置數據</button>
+    </div>
 
-<div class="counter">
-🌍 總共溜了：
-<span id="totalWalks">0</span> 次
-</div>
+    <div class="result-container" id="result-display">
+        </div>
 
-<div class="counter">
-👤 你溜了：
-<span id="myWalks">0</span> 次
-</div>
+    <script>
+        // 1. 定義化學式卡池 (包含顯示用的 HTML 格式，如 <sub> 標籤)
+        const GACHA_POOL = {
+            SSR: {
+                chance: 0.03, // 3% 機率
+                items: [
+                    { formula: "C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>", name: "葡萄糖 (Glucose)" },
+                    { formula: "KMnO<sub>4</sub>", name: "高錳酸鉀 (Potassium Permanganate)" },
+                    { formula: "C<sub>9</sub>H<sub>8</sub>O<sub>4</sub>", name: "阿斯匹靈 (Aspirin)" },
+                    { formula: "CH<sub>3</sub>COOH", name: "醋酸 (Acetic Acid)" },
+                    { formula: "C<sub>2</sub>H<sub>5</sub>OH", name: "乙醇/酒精 (Ethanol)" }
+                ]
+            },
+            SR: {
+                chance: 0.12, // 12% 機率
+                items: [
+                    { formula: "CO<sub>2</sub>", name: "二氧化碳 (Carbon Dioxide)" },
+                    { formula: "H<sub>2</sub>SO<sub>4</sub>", name: "硫酸 (Sulfuric Acid)" },
+                    { formula: "HCl", name: "鹽酸 (Hydrochloric Acid)" },
+                    { formula: "NaOH", name: "氫氧化鈉 (Sodium Hydroxide)" },
+                    { formula: "NH<sub>3</sub>", name: "氨氣 (Ammonia)" },
+                    { formula: "CaCO<sub>3</sub>", name: "碳酸鈣/大理石 (Calcium Carbonate)" }
+                ]
+            },
+            R: {
+                chance: 0.85, // 85% 機率
+                items: [
+                    { formula: "H<sub>2</sub>O", name: "水 (Water)" },
+                    { formula: "O<sub>2</sub>", name: "氧氣 (Oxygen)" },
+                    { formula: "H<sub>2</sub>", name: "氫氣 (Hydrogen)" },
+                    { formula: "NaCl", name: "氯化鈉/食鹽 (Sodium Chloride)" },
+                    { formula: "N<sub>2</sub>", name: "氮氣 (Nitrogen)" },
+                    { formula: "C", name: "碳 (Carbon)" },
+                    { formula: "Fe", name: "鐵 (Iron)" },
+                    { formula: "Cu", name: "銅 (Copper)" }
+                ]
+            }
+        };
 
-<button onclick="walkElephant()">
-🚶 溜大象
-</button>
+        // 2. 初始化計數器
+        let stats = { total: 0, SSR: 0, SR: 0, R: 0 };
 
-<p id="message">
-大象正在等你帶牠散步！
-</p>
+        // 3. 抽單張卡的邏輯 (可指定是否觸發保底)
+        function drawSingleCard(forceSRorAbove = false) {
+            let roll = Math.random();
+            
+            // 如果觸發十連抽保底，將機率重新分配給 SSR 和 SR
+            if (forceSRorAbove) {
+                // 假設在保底中，SSR 機率提升，其餘為 SR
+                const srChanceInGuarantee = GACHA_POOL.SR.chance / (GACHA_POOL.SSR.chance + GACHA_POOL.SR.chance);
+                if (roll > srChanceInGuarantee) {
+                    return { rarity: "SSR", data: getRandomItem(GACHA_POOL.SSR.items) };
+                } else {
+                    return { rarity: "SR", data: getRandomItem(GACHA_POOL.SR.items) };
+                }
+            }
 
-</div>
+            // 正常抽卡機率判定
+            if (roll < GACHA_POOL.SSR.chance) {
+                return { rarity: "SSR", data: getRandomItem(GACHA_POOL.SSR.items) };
+            } else if (roll < GACHA_POOL.SSR.chance + GACHA_POOL.SR.chance) {
+                return { rarity: "SR", data: getRandomItem(GACHA_POOL.SR.items) };
+            } else {
+                return { rarity: "R", data: getRandomItem(GACHA_POOL.R.items) };
+            }
+        }
 
-<script>
-let totalWalks =
-Number(localStorage.getItem("totalWalks")) || 0;
+        // 輔助函式：從陣列隨機選一個
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
 
-let myWalks =
-Number(localStorage.getItem("myWalks")) || 0;
+        // 4. 核心抽卡動作 (1抽 或 10抽)
+        function gacha(times) {
+            const display = document.getElementById("result-display");
+            display.innerHTML = ""; // 清空上一次的畫面
 
-updateDisplay();
+            let currentResults = [];
+            let hasSRorAbove = false;
 
-function walkElephant(){
+            for (let i = 0; i < times; i++) {
+                // 如果是十連抽的最後一抽，且前 9 抽都是 R，則強制保底
+                let forceGuarantee = (times === 10 && i === 9 && !hasSRorAbove);
+                
+                let card = drawSingleCard(forceGuarantee);
+                
+                if (card.rarity === "SSR" || card.rarity === "SR") {
+                    hasSRorAbove = true;
+                }
+                
+                currentResults.push(card);
+                
+                // 更新統計數據
+                stats.total++;
+                stats[card.rarity]++;
+            }
 
-    totalWalks++;
-    myWalks++;
+            // 渲染卡片到網頁上
+            currentResults.forEach((card, index) => {
+                setTimeout(() => {
+                    const cardElement = document.createElement("div");
+                    cardElement.className = `card ${card.rarity}`;
+                    cardElement.innerHTML = `
+                        <div class="rarity">${card.rarity}</div>
+                        <div class="formula">${card.data.formula}</div>
+                        <div class="name">${card.data.name}</div>
+                    `;
+                    display.appendChild(cardElement);
+                }, index * 60); // 加上微小的延遲動畫，讓卡片一張張跳出來更有感
+            });
 
-    localStorage.setItem("totalWalks", totalWalks);
-    localStorage.setItem("myWalks", myWalks);
+            updateStatsUI();
+        }
 
-    updateDisplay();
+        // 5. 更新介面的統計數據
+        function updateStatsUI() {
+            document.getElementById("total-draws").innerText = stats.total;
+            document.getElementById("count-ssr").innerText = stats.SSR;
+            document.getElementById("count-sr").innerText = stats.SR;
+            document.getElementById("count-r").innerText = stats.R;
+        }
 
-    const elephant = document.getElementById("elephant");
-
-    if(totalWalks >= 100){
-        elephant.innerText = "👑🐘";
-    }
-    else if(totalWalks >= 50){
-        elephant.innerText = "🥳🐘";
-    }
-    else if(totalWalks >= 20){
-        elephant.innerText = "😆🐘";
-    }
-    else{
-        elephant.innerText = "🐘";
-    }
-}
-
-function updateDisplay(){
-    document.getElementById("totalWalks").innerText = totalWalks;
-    document.getElementById("myWalks").innerText = myWalks;
-
-    document.getElementById("message").innerText =
-        `🐘 今天已經散步 ${totalWalks} 次啦！`;
-}
-</script>
-
+        // 6. 重置功能
+        function resetStats() {
+            stats = { total: 0, SSR: 0, SR: 0, R: 0 };
+            document.getElementById("result-display").innerHTML = "";
+            updateStatsUI();
+        }
+    </script>
 </body>
 </html>
