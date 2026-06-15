@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧪 元素之域：千種化學式魔王級卡池 v3.0</title>
+    <title>🧪 元素之域：千種化學式時間凍結版 v5.0</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -43,26 +43,41 @@
             background-color: var(--panel-bg);
             border: 1px solid #30363d;
             border-radius: 6px;
-            padding: 15px 30px;
+            padding: 12px 25px;
             display: flex;
             gap: 25px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 0.95rem;
         }
 
-        .stat-item span {
-            font-weight: bold;
-        }
+        .stat-item span { font-weight: bold; }
         .stat-ssr { color: var(--ssr-color); }
         .stat-sr { color: var(--sr-color); }
         .stat-r { color: var(--r-color); }
 
+        .energy-container {
+            width: 320px;
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            height: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        .energy-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #58a6ff, #a371f7);
+            transition: width 0.3s ease;
+        }
+
         .lock-hint {
             color: #f0883e;
             font-size: 0.85rem;
-            margin-bottom: 20px;
-            height: 18px;
+            margin-bottom: 25px;
             font-weight: bold;
+            height: 18px;
         }
         .lock-hint.unlocked { color: #56d364; }
 
@@ -100,7 +115,14 @@
             color: #484f58;
             border-color: #21262d;
             cursor: not-allowed;
-            opacity: 0.6;
+            opacity: 0.4;
+        }
+
+        /* 凍結倒數中的特別按鈕樣式 */
+        button.cooldown {
+            background-color: #21262d !important;
+            color: #f0883e !important;
+            border-color: #f0883e !important;
         }
 
         .result-container {
@@ -110,6 +132,8 @@
             gap: 20px;
             max-width: 1000px;
             width: 100%;
+            margin-bottom: 50px;
+            min-height: 240px;
         }
 
         .card {
@@ -124,58 +148,78 @@
             align-items: center;
             padding: 20px 15px;
             box-sizing: border-box;
-            position: relative;
             animation: fadeIn 0.4s ease-out forwards;
-            opacity: 0;
         }
 
         @keyframes fadeIn {
-            to { opacity: 1; transform: translateY(0); }
             from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .card .rarity {
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
+        .card .rarity { font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; }
+        .card .formula { font-size: 1.15rem; font-weight: bold; color: #ffffff; text-align: center; word-break: break-all; margin: auto 0; line-height: 1.2; }
+        .card .name { font-size: 0.8rem; color: #8b949e; text-align: center; height: 35px; display: flex; align-items: center; justify-content: center; }
 
-        .card .formula {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-align: center;
-            word-break: break-all;
-            line-height: 1.2;
-            margin: auto 0;
-        }
-
-        .card .name {
-            font-size: 0.8rem;
-            color: #8b949e;
-            text-align: center;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card.R { border-color: var(--r-color); box-shadow: 0 0 5px rgba(88, 166, 255, 0.1); }
-        .card.R .rarity { color: var(--r-color); }
-
-        .card.SR { border-color: var(--sr-color); box-shadow: 0 0 10px rgba(163, 113, 247, 0.2); }
-        .card.SR .rarity { color: var(--sr-color); }
-
+        .card.R { border-color: var(--r-color); } .card.R .rarity { color: var(--r-color); }
+        .card.SR { border-color: var(--sr-color); box-shadow: 0 0 10px rgba(163, 113, 247, 0.2); } .card.SR .rarity { color: var(--sr-color); }
         .card.SSR { 
             border-color: var(--ssr-color); 
             box-shadow: 0 0 20px var(--ssr-glow);
-            animation: sscrGlow 2s infinite alternate, fadeIn 0.4s ease-out forwards;
+            animation: sscrGlow 2s infinite alternate;
         }
         .card.SSR .rarity { color: var(--ssr-color); text-shadow: 0 0 5px var(--ssr-glow); }
 
-        @keyframes sscrGlow {
-            from { box-shadow: 0 0 10px rgba(255, 69, 0, 0.5); }
-            to { box-shadow: 0 0 25px rgba(255, 123, 0, 0.8); }
+        @keyframes sscrGlow { from { box-shadow: 0 0 10px rgba(255, 69, 0, 0.5); } to { box-shadow: 0 0 25px rgba(255, 123, 0, 0.8); } }
+
+        .inventory-section {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--panel-bg);
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 25px;
+            box-sizing: border-box;
+            margin-top: 20px;
+        }
+
+        .inventory-title {
+            font-size: 1.2rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .inv-item {
+            background-color: #21262d;
+            border-left: 4px solid #30363d;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .inv-item.R { border-left-color: var(--r-color); }
+        .inv-item.SR { border-left-color: var(--sr-color); }
+        .inv-item.SSR { border-left-color: var(--ssr-color); }
+        
+        .inv-count {
+            background-color: #30363d;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #ffffff;
         }
 
         sub { font-size: 0.6em; bottom: -0.1em; }
@@ -183,267 +227,49 @@
 </head>
 <body>
 
-    <h1>MEGA CHEMICAL GACHA</h1>
-    <div class="subtitle">🧪 元素之域 · 1000+ 萬物卡池聯動版 v3.0</div>
+    <h1>QUANTUM CHEMICAL GACHA</h1>
+    <div class="subtitle">🧪 元素之域 · 防速點時間凍結充能版 v5.0</div>
 
     <div class="stats-panel">
-        <div class="stat-item">總抽數：<span id="total-draws">0</span></div>
-        <div class="stat-item">單抽累積：<span id="single-draws-count">0</span>/10</div>
+        <div class="total-draws">總抽數：<span id="total-draws">0</span></div>
         <div class="stat-item">卡池總數：<span id="pool-size" style="color:#56d364;">0</span> 種</div>
     </div>
     
-    <div class="stats-panel" style="margin-top:-5px; padding: 8px 20px; font-size:0.85rem; border-color:#21262d;">
+    <div class="stats-panel" style="margin-top:-5px; padding: 6px 20px; font-size:0.85rem; border-color:#21262d;">
         <div class="stat-item stat-ssr">SSR：<span id="count-ssr">0</span></div>
         <div class="stat-item stat-sr">SR：<span id="count-sr">0</span></div>
         <div class="stat-item stat-r">R：<span id="count-r">0</span></div>
     </div>
 
-    <div class="lock-hint" id="lock-message">⚠️ 需先進行 10 次單抽，以解鎖量子十連抽功能。</div>
+    <div style="font-size:0.85rem; margin-bottom:5px; color:#8b949e;">十連抽量子充能進度：</div>
+    <div class="energy-container">
+        <div class="energy-bar" id="energy-bar"></div>
+    </div>
+    <div class="lock-hint" id="lock-message">🔋 還需要進行 10 次單抽以充能十連抽。</div>
 
     <div class="btn-container">
-        <button onclick="gacha(1)">單抽能量</button>
-        <button class="primary" id="btn-ten-draw" onclick="gacha(10)" disabled>連結十連抽 (必中SR+)</button>
-        <button onclick="resetStats()">重置數據</button>
+        <button id="btn-single-draw" onclick="gachaAction(1)">單抽能量 (+1充能)</button>
+        <button class="primary" id="btn-ten-draw" onclick="gachaAction(10)" disabled>釋放量子十連抽 (消耗能量)</button>
+        <button id="btn-reset" onclick="resetStats()">重置數據</button>
     </div>
 
     <div class="result-container" id="result-display"></div>
 
+    <div class="inventory-section">
+        <div class="inventory-title">
+            <span>🎒 我的化學元素背包 (已收集 <span id="unique-count" style="color:#58a6ff;">0</span> 種)</span>
+        </div>
+        <div class="inventory-grid" id="inventory-display"></div>
+    </div>
+
     <script>
-        // 1. 靜態基礎卡池（包含經典和新引入的各類無機物）
+        // 1. 千種魔王級卡池動態生成邏輯
         const BASE_POOL = {
             SSR: [
-                { formula: "KMnO<sub>4</sub>", name: "高錳酸鉀" },
-                { formula: "KCN", name: "氰化鉀 (劇毒)" },
-                { formula: "C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>", name: "蔗糖" },
-                { formula: "HNO<sub>3</sub>", name: "濃硝酸" },
-                { formula: "H<sub>2</sub>PtCl<sub>6</sub>", name: "氯鉑酸" },
-                { formula: "Ag(NH<sub>3</sub>)<sub>2</sub>OH", name: "多倫試劑 (銀鏡反應)" },
+                { formula: "KMnO<sub>4</sub>", name: "高錳酸鉀" }, { formula: "KCN", name: "氰化鉀 (劇毒)" },
+                { formula: "C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>", name: "蔗糖" }, { formula: "HNO<sub>3</sub>", name: "濃硝酸" },
                 { formula: "C<sub>20</sub>H<sub>14</sub>O<sub>4</sub>", name: "酚酞指示劑" }
             ],
             SR: [
                 { formula: "H<sub>2</sub>SO<sub>4</sub>", name: "硫酸" }, { formula: "HCl", name: "鹽酸" },
-                { formula: "NaOH", name: "氫氧化鈉" }, { formula: "CaCO<sub>3</sub>", name: "碳酸鈣" },
-                { formula: "H<sub>2</sub>O<sub>2</sub>", name: "過氧化氫" }, { formula: "NaHCO<sub>3</sub>", name: "碳酸氫鈉" },
-                { formula: "CuSO<sub>4</sub>", name: "硫酸銅" }, { formula: "NH<sub>4</sub>NO<sub>3</sub>", name: "硝酸銨" },
-                { formula: "FeCl<sub>3</sub>", name: "氯化鐵" }, { formula: "Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>", name: "硫酸鋁" },
-                { formula: "K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub>", name: "重鉻酸鉀" }, { formula: "BaSO<sub>4</sub>", name: "硫酸鋇 (鋇餐)" }
-            ],
-            R: [
-                { formula: "H<sub>2</sub>O", name: "水" }, { formula: "NaCl", name: "氯化鈉" },
-                { formula: "CO<sub>2</sub>", name: "二氧化碳" }, { formula: "CO", name: "一氧化碳" },
-                { formula: "O<sub>2</sub>", name: "氧氣" }, { formula: "N<sub>2</sub>", name: "氮氣" },
-                { formula: "H<sub>2</sub>", name: "氫氣" }, { formula: "Cl<sub>2</sub>", name: "氯氣" }
-            ]
-        };
-
-        // 2. 元素週期表擴充（自動加入 R 卡池）
-        const ELEMENTS = [
-            {f:"H", n:"氫"}, {f:"He", n:"氦"}, {f:"Li", n:"鋰"}, {f:"Be", n:"鈹"}, {f:"B", n:"硼"},
-            {f:"C", n:"碳"}, {f:"N", n:"氮"}, {f:"O", n:"氧"}, {f:"F", n:"氟"}, {f:"Ne", n:"氖"},
-            {f:"Na", n:"鈉"}, {f:"Mg", n:"鎂"}, {f:"Al", n:"鋁"}, {f:"Si", n:"矽"}, {f:"P", n:"磷"},
-            {f:"S", n:"硫"}, {f:"Cl", n:"氯"}, {f:"Ar", n:"氬"}, {f:"K", n:"鉀"}, {f:"Ca", n:"鈣"},
-            {f:"Sc", n:"鈧"}, {f:"Ti", n:"鈦"}, {f:"V", n:"釩"}, {f:"Cr", n:"鉻"}, {f:"Mn", n:"錳"},
-            {f:"Fe", n:"鐵"}, {f:"Co", n:"鈷"}, {f:"Ni", n:"鎳"}, {f:"Cu", n:"銅"}, {f:"Zn", n:"鋅"},
-            {f:"Ga", n:"鎵"}, {f:"Ge", n:"鍺"}, {f:"As", n:"砷"}, {f:"Se", n:"硒"}, {f:"Br", n:"溴"},
-            {f:"Kr", n:"氪"}, {f:"Rb", n:"銣"}, {f:"Sr", n:"鍶"}, {f:"Y", n:"釔"}, {f:"Zr", n:"鋯"},
-            {f:"Nb", n:"鈮"}, {f:"Mo", n:"鉬"}, {f:"Tc", n:"鎝"}, {f:"Ru", n:"釕"}, {f:"Rh", n:"銠"},
-            {f:"Pd", n:"鈀"}, {f:"Ag", n:"銀"}, {f:"Cd", n:"鎘"}, {f:"In", n:"銦"}, {f:"Sn", n:"錫"},
-            {f:"Sb", n:"銻"}, {f:"Te", n:"碲"}, {f:"I", n:"碘"}, {f:"Xe", n:"氙"}, {f:"Cs", n:"銫"},
-            {f:"Ba", n:"鋇"}, {f:"Pt", n:"鉑"}, {f:"Au", n:"金"}, {f:"Hg", n:"汞"}, {f:"Pb", n:"鉛"},
-            {f:"U", n:"鈾"}, {f:"Pu", n:"鈽"}
-        ];
-
-        // 3. 有機化學分子自動生成器（魔王級擴充核心）
-        const PREFIXES = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"];
-        
-        function generateOrganicPool() {
-            let pool = { SSR: [], SR: [], R: [] };
-
-            PREFIXES.forEach((pref, index) => {
-                let c = index + 1; // 碳原子數
-
-                // A. 烷類 (C_n H_2n+2) -> R 或 SR
-                let h_alkane = c * 2 + 2;
-                let alkane = {
-                    formula: `C<sub>${c}</sub>H<sub>${h_alkane}</sub>`,
-                    name: `${pref}烷`
-                };
-                if(c <= 4) pool.R.push(alkane); else pool.SR.push(alkane);
-
-                // B. 烯類 (C_n H_2n) -> SR
-                if (c >= 2) {
-                    pool.SR.push({
-                        formula: `C<sub>${c}</sub>H<sub>${c*2}</sub>`,
-                        name: `${pref}烯`
-                    });
-                }
-
-                // C. 醇類 (C_n H_2n+1 OH) -> SR 或 SSR
-                let h_alcohol = c * 2 + 1;
-                let alcohol = {
-                    formula: `C<sub>${c}</sub>H<sub>${h_alcohol}</sub>OH`,
-                    name: `${pref}醇`
-                };
-                if(c <= 3) pool.SR.push(alcohol); else pool.SSR.push(alcohol);
-
-                // D. 羧酸類 (C_n-1 H_2n-1 COOH) -> SR 或 SSR
-                let c_acid = c - 1;
-                let h_acid = c_acid * 2 + 1;
-                let acidFormula = c_acid === 0 ? "HCOOH" : `C<sub>${c_acid}</sub>H<sub>${h_acid}</sub>COOH`;
-                let acid = {
-                    formula: acidFormula,
-                    name: `${pref}酸`
-                };
-                if(c <= 3) pool.SR.push(acid); else pool.SSR.push(acid);
-
-                // E. 酯類隨機組合 (R-COO-R') -> 暴力產生數百種 SSR
-                PREFIXES.forEach((pref2, index2) => {
-                    let c2 = index2 + 1;
-                    if (c < 10 && c2 < 10) { // 限制在常用範圍內，避免名字太誇張
-                        pool.SSR.push({
-                            formula: `C<sub>${c}</sub>H<sub>${c*2+1}</sub>COOC<sub>${c2}</sub>H<sub>${c2*2+1}</sub>`,
-                            name: `${pref}酸${pref2}酯`
-                        });
-                    }
-                });
-            });
-            return pool;
-        }
-
-        // 4. 合併所有動態與靜態數據
-        let FINAL_POOL = { SSR: [], SR: [], R: [] };
-        
-        function initGachaPool() {
-            // 載入靜態
-            FINAL_POOL.SSR = [...BASE_POOL.SSR];
-            FINAL_POOL.SR = [...BASE_POOL.SR];
-            FINAL_POOL.R = [...BASE_POOL.R];
-
-            // 載入元素週期表到 R 卡池
-            ELEMENTS.forEach(el => {
-                FINAL_POOL.R.push({ formula: el.f, name: el.n });
-            });
-
-            // 載入自動生成的有機物
-            let organic = generateOrganicPool();
-            FINAL_POOL.SSR = FINAL_POOL.SSR.concat(organic.SSR);
-            FINAL_POOL.SR = FINAL_POOL.SR.concat(organic.SR);
-            FINAL_POOL.R = FINAL_POOL.R.concat(organic.R);
-
-            // 在畫面上顯示當前卡池總數
-            let totalPoolSize = FINAL_POOL.SSR.length + FINAL_POOL.SR.length + FINAL_POOL.R.length;
-            document.getElementById("pool-size").innerText = totalPoolSize;
-        }
-
-        // 執行初始化
-        initGachaPool();
-
-        // 5. 遊戲邏輯控制
-        let stats = { total: 0, SSR: 0, SR: 0, R: 0 };
-        let singleDrawCount = 0;
-        let isTenDrawUnlocked = false;
-
-        function drawSingleCard(forceSRorAbove = false) {
-            let roll = Math.random();
-            const CHANCE_SSR = 0.03;
-            const CHANCE_SR = 0.12;
-
-            if (forceSRorAbove) {
-                const srChanceInGuarantee = CHANCE_SR / (CHANCE_SSR + CHANCE_SR);
-                if (roll > srChanceInGuarantee) {
-                    return { rarity: "SSR", data: getRandomItem(FINAL_POOL.SSR) };
-                } else {
-                    return { rarity: "SR", data: getRandomItem(FINAL_POOL.SR) };
-                }
-            }
-
-            if (roll < CHANCE_SSR) {
-                return { rarity: "SSR", data: getRandomItem(FINAL_POOL.SSR) };
-            } else if (roll < CHANCE_SSR + CHANCE_SR) {
-                return { rarity: "SR", data: getRandomItem(FINAL_POOL.SR) };
-            } else {
-                return { rarity: "R", data: getRandomItem(FINAL_POOL.R) };
-            }
-        }
-
-        function getRandomItem(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
-
-        function gacha(times) {
-            const display = document.getElementById("result-display");
-            display.innerHTML = "";
-
-            let currentResults = [];
-            let hasSRorAbove = false;
-
-            if (times === 1) {
-                if (!isTenDrawUnlocked) {
-                    singleDrawCount++;
-                    if (singleDrawCount >= 10) {
-                        isTenDrawUnlocked = true;
-                        alert("⚡ 量子矩陣已超載！十連抽功能永久解鎖！");
-                    }
-                }
-            }
-
-            for (let i = 0; i < times; i++) {
-                let forceGuarantee = (times === 10 && i === 9 && !hasSRorAbove);
-                let card = drawSingleCard(forceGuarantee);
-                
-                if (card.rarity === "SSR" || card.rarity === "SR") {
-                    hasSRorAbove = true;
-                }
-                
-                currentResults.push(card);
-                stats.total++;
-                stats[card.rarity]++;
-            }
-
-            currentResults.forEach((card, index) => {
-                setTimeout(() => {
-                    const cardElement = document.createElement("div");
-                    cardElement.className = `card ${card.rarity}`;
-                    cardElement.innerHTML = `
-                        <div class="rarity">${card.rarity}</div>
-                        <div class="formula">${card.data.formula}</div>
-                        <div class="name">${card.data.name}</div>
-                    `;
-                    display.appendChild(cardElement);
-                }, index * 60);
-            });
-
-            updateStatsUI();
-        }
-
-        function updateStatsUI() {
-            document.getElementById("total-draws").innerText = stats.total;
-            document.getElementById("count-ssr").innerText = stats.SSR;
-            document.getElementById("count-sr").innerText = stats.SR;
-            document.getElementById("count-r").innerText = stats.R;
-            document.getElementById("single-draws-count").innerText = singleDrawCount;
-
-            const tenDrawBtn = document.getElementById("btn-ten-draw");
-            const lockMsg = document.getElementById("lock-message");
-
-            if (isTenDrawUnlocked) {
-                tenDrawBtn.disabled = false;
-                lockMsg.innerText = "🔓 量子核心運作正常，十連抽隨時待命。";
-                lockMsg.className = "lock-hint unlocked";
-            } else {
-                tenDrawBtn.disabled = true;
-                lockMsg.innerText = `⚠️ 需先進行 10 次單抽，以解鎖量子十連抽功能。（目前進度：${singleDrawCount}/10）`;
-                lockMsg.className = "lock-hint";
-            }
-        }
-
-        function resetStats() {
-            stats = { total: 0, SSR: 0, SR: 0, R: 0 };
-            singleDrawCount = 0;
-            isTenDrawUnlocked = false;
-            document.getElementById("result-display").innerHTML = "";
-            updateStatsUI();
-        }
-    </script>
-</body>
-</html>
+                { formula: "NaOH", name: "氫氧化鈉" }, { formula: "CaCO<sub>3</sub>", name: "碳酸鈣
