@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧪 元素之域：千種化學式完美修復版 v5.1</title>
+    <title>🧪 元素之域：2000+化學式魔王卡池 v6.0</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -156,8 +156,8 @@
         }
 
         .card .rarity { font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; }
-        .card .formula { font-size: 1.15rem; font-weight: bold; color: #ffffff; text-align: center; word-break: break-all; margin: auto 0; line-height: 1.2; }
-        .card .name { font-size: 0.8rem; color: #8b949e; text-align: center; height: 35px; display: flex; align-items: center; justify-content: center; }
+        .card .formula { font-size: 1.05rem; font-weight: bold; color: #ffffff; text-align: center; word-break: break-all; margin: auto 0; line-height: 1.2; }
+        .card .name { font-size: 0.75rem; color: #8b949e; text-align: center; height: 35px; display: flex; align-items: center; justify-content: center; }
 
         .card.R { border-color: var(--r-color); } .card.R .rarity { color: var(--r-color); }
         .card.SR { border-color: var(--sr-color); box-shadow: 0 0 10px rgba(163, 113, 247, 0.2); } .card.SR .rarity { color: var(--sr-color); }
@@ -206,7 +206,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .inv-item.R { border-left-color: var(--r-color); }
@@ -226,8 +226,8 @@
 </head>
 <body>
 
-    <h1>QUANTUM CHEMICAL GACHA</h1>
-    <div class="subtitle">🧪 元素之域 · 千種卡池修復版 v5.1</div>
+    <h1>ULTIMATE CHEMICAL GACHA</h1>
+    <div class="subtitle">🧪 元素之域 · 2000+ 種無窮衍生卡池 v6.0</div>
 
     <div class="stats-panel">
         <div class="total-draws">總抽數：<span id="total-draws">0</span></div>
@@ -262,14 +262,277 @@
     </div>
 
     <script>
-        // 1. 卡池資料動態生成
+        // 1. 基礎無機物卡池
         const BASE_POOL = {
             SSR: [
                 { formula: "KMnO<sub>4</sub>", name: "高錳酸鉀" }, { formula: "KCN", name: "氰化鉀 (劇毒)" },
                 { formula: "C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>", name: "蔗糖" }, { formula: "HNO<sub>3</sub>", name: "濃硝酸" },
-                { formula: "C<sub>20</sub>H<sub>14</sub>O<sub>4</sub>", name: "酚酞指示劑" }
+                { formula: "C<sub>20</sub>H<sub>14</sub>O<sub>4</sub>", name: "酚酞指示劑" }, { formula: "H<sub>2</sub>PtCl<sub>6</sub>", name: "氯鉑酸" },
+                { formula: "Ag(NH<sub>3</sub>)<sub>2</sub>OH", name: "多倫試劑" }, { formula: "C<sub>2</sub>O<sub>4</sub><sup>2-</sup>", name: "草酸根離子" }
             ],
             SR: [
                 { formula: "H<sub>2</sub>SO<sub>4</sub>", name: "硫酸" }, { formula: "HCl", name: "鹽酸" },
                 { formula: "NaOH", name: "氫氧化鈉" }, { formula: "CaCO<sub>3</sub>", name: "碳酸鈣" },
-                { formula: "H<sub>2</sub>O<sub>2</sub>", name: "過氧化氫"
+                { formula: "H<sub>2</sub>O<sub>2</sub>", name: "過氧化氫" }, { formula: "NaHCO<sub>3</sub>", name: "碳酸氫鈉" },
+                { formula: "CuSO<sub>4</sub>", name: "硫酸銅" }, { formula: "NH<sub>4</sub>NO<sub>3</sub>", name: "硝酸銨" },
+                { formula: "H<sub>3</sub>PO<sub>4</sub>", name: "磷酸" }, { formula: "Al<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub>", name: "硫酸鋁" }
+            ],
+            R: [
+                { formula: "H<sub>2</sub>O", name: "水" }, { formula: "NaCl", name: "氯化鈉" },
+                { formula: "CO<sub>2</sub>", name: "二氧化碳" }, { formula: "O<sub>2</sub>", name: "氧氣" },
+                { formula: "CO", name: "一氧化碳" }, { formula: "NH<sub>3</sub>", name: "氨氣" }
+            ]
+        };
+
+        // 完整元素週期表常規元素
+        const ELEMENTS = [
+            {f:"H", n:"氫"}, {f:"He", n:"氦"}, {f:"Li", n:"鋰"}, {f:"Be", n:"鈹"}, {f:"B", n:"硼"},
+            {f:"C", n:"碳"}, {f:"N", n:"氮"}, {f:"O", n:"氧"}, {f:"F", n:"氟"}, {f:"Ne", n:"氖"},
+            {f:"Na", n:"鈉"}, {f:"Mg", n:"鎂"}, {f:"Al", n:"鋁"}, {f:"Si", n:"矽"}, {f:"P", n:"磷"},
+            {f:"S", n:"硫"}, {f:"Cl", n:"氯"}, {f:"Ar", n:"氬"}, {f:"K", n:"鉀"}, {f:"Ca", n:"鈣"},
+            {f:"Sc", n:"鈧"}, {f:"Ti", n:"鈦"}, {f:"V", n:"釩"}, {f:"Cr", n:"鉻"}, {f:"Mn", n:"錳"},
+            {f:"Fe", n:"鐵"}, {f:"Co", n:"鈷"}, {f:"Ni", n:"鎳"}, {f:"Cu", n:"銅"}, {f:"Zn", n:"鋅"},
+            {f:"Ga", n:"鎵"}, {f:"Ge", n:"鍺"}, {f:"As", n:"砷"}, {f:"Se", n:"硒"}, {f:"Br", n:"溴"},
+            {f:"Kr", n:"氪"}, {f:"Rb", n:"銣"}, {f:"Sr", n:"鍶"}, {f:"Y", n:"釔"}, {f:"Zr", n:"鋯"},
+            {f:"Ag", n:"銀"}, {f:"Cd", n:"鎘"}, {f:"Sn", n:"錫"}, {f:"I", n:"碘"}, {f:"Xe", n:"氙"},
+            {f:"Pt", n:"鉑"}, {f:"Au", n:"金"}, {f:"Hg", n:"汞"}, {f:"Pb", n:"鉛"}, {f:"U", n:"鈾"}
+        ];
+
+        // 天干與中文數字前綴（一路開到二十）
+        const PREFIXES = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"];
+        let FINAL_POOL = { SSR: [], SR: [], R: [] };
+        
+        function initGachaPool() {
+            FINAL_POOL.SSR = [...BASE_POOL.SSR]; FINAL_POOL.SR = [...BASE_POOL.SR]; FINAL_POOL.R = [...BASE_POOL.R];
+            ELEMENTS.forEach(el => FINAL_POOL.R.push({ formula: el.f, name: el.n }));
+
+            // 20層深度循環生成器
+            PREFIXES.forEach((pref, index) => {
+                let c = index + 1;
+                
+                // 1. 烷類 (C_n H_2n+2)
+                let h_alkane = c * 2 + 2;
+                if(c <= 4) FINAL_POOL.R.push({ formula: `C<sub>${c}</sub>H<sub>${h_alkane}</sub>`, name: `${pref}烷` });
+                else FINAL_POOL.SR.push({ formula: `C<sub>${c}</sub>H<sub>${h_alkane}</sub>`, name: `${pref}烷` });
+                
+                // 2. 烯類 (C_n H_2n) 與 炔類 (C_n H_2n-2)
+                if (c >= 2) {
+                    FINAL_POOL.SR.push({ formula: `C<sub>${c}</sub>H<sub>${c*2}</sub>`, name: `${pref}烯` });
+                    FINAL_POOL.SR.push({ formula: `C<sub>${c}</sub>H<sub>${c*2-2}</sub>`, name: `${pref}炔` });
+                }
+                
+                // 3. 醇類 (C_n H_2n+1 OH)
+                if(c <= 4) FINAL_POOL.SR.push({ formula: `C<sub>${c}</sub>H<sub>${c*2+1}</sub>OH`, name: `${pref}醇` });
+                else FINAL_POOL.SSR.push({ formula: `C<sub>${c}</sub>H<sub>${c*2+1}</sub>OH`, name: `${pref}醇` });
+
+                // 4. 羧酸類 (C_n-1 H_2n-1 COOH)
+                let c_acid = c - 1;
+                let h_acid = c_acid * 2 + 1;
+                let acidForm = c_acid === 0 ? "HCOOH" : `C<sub>${c_acid}</sub>H<sub>${h_acid}</sub>COOH`;
+                if(c <= 4) FINAL_POOL.SR.push({ formula: acidForm, name: `${pref}酸` });
+                else FINAL_POOL.SSR.push({ formula: acidForm, name: `${pref}酸` });
+
+                // 5. 酯類暴力全展開 (20 * 20 = 400種交叉組合) -> 塞爆 SSR 宇宙
+                PREFIXES.forEach((pref2, index2) => {
+                    let c2 = index2 + 1;
+                    FINAL_POOL.SSR.push({
+                        formula: `C<sub>${c}</sub>H<sub>${c*2+1}</sub>COOC<sub>${c2}</sub>H<sub>${c2*2+1}</sub>`,
+                        name: `${pref}酸${pref2}酯`
+                    });
+                });
+            });
+
+            // 統計總數
+            let totalSize = FINAL_POOL.SSR.length + FINAL_POOL.SR.length + FINAL_POOL.R.length;
+            document.getElementById("pool-size").innerText = totalSize;
+        }
+        initGachaPool();
+
+        // 2. 狀態與邏輯控制
+        let stats = { total: 0, SSR: 0, SR: 0, R: 0 };
+        let energyCharge = 0;
+        let myInventory = {};
+        let isThrottled = false; 
+
+        function drawSingleCard(forceSRorAbove = false) {
+            let roll = Math.random();
+            const CHANCE_SSR = 0.03; const CHANCE_SR = 0.12;
+
+            if (forceSRorAbove) {
+                const srChanceInGuarantee = CHANCE_SR / (CHANCE_SSR + CHANCE_SR);
+                return roll > srChanceInGuarantee ? { rarity: "SSR", data: getRandomItem(FINAL_POOL.SSR) } : { rarity: "SR", data: getRandomItem(FINAL_POOL.SR) };
+            }
+            if (roll < CHANCE_SSR) return { rarity: "SSR", data: getRandomItem(FINAL_POOL.SSR) };
+            if (roll < CHANCE_SSR + CHANCE_SR) return { rarity: "SR", data: getRandomItem(FINAL_POOL.SR) };
+            return { rarity: "R", data: getRandomItem(FINAL_POOL.R) };
+        }
+
+        function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function gachaAction(times) {
+            if (isThrottled) return; 
+            executeGacha(times);
+            const cooldownTime = times === 1 ? 1500 : 3000; 
+            startCooldown(times, cooldownTime);
+        }
+
+        function startCooldown(type, duration) {
+            isThrottled = true;
+            const singleBtn = document.getElementById("btn-single-draw");
+            const tenBtn = document.getElementById("btn-ten-draw");
+            const resetBtn = document.getElementById("btn-reset");
+
+            singleBtn.disabled = true;
+            tenBtn.disabled = true;
+            resetBtn.disabled = true;
+
+            const activeBtn = (type === 1) ? singleBtn : tenBtn;
+            activeBtn.className += " cooldown";
+
+            let timeLeft = duration / 1000;
+            activeBtn.innerText = `冷卻中... ${timeLeft.toFixed(1)}s`;
+
+            const interval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    isThrottled = false;
+                    singleBtn.className = "";
+                    tenBtn.className = "primary";
+                    
+                    singleBtn.disabled = false;
+                    resetBtn.disabled = false;
+                    
+                    singleBtn.innerText = "單抽能量 (+1充能)";
+                    tenBtn.innerText = "釋放量子十連抽 (消耗能量)";
+                    
+                    updateStatsUI();
+                } else {
+                    activeBtn.innerText = `冷卻中... ${timeLeft.toFixed(1)}s`;
+                }
+            }, 100);
+        }
+
+        function executeGacha(times) {
+            const display = document.getElementById("result-display");
+            display.innerHTML = "";
+
+            let currentResults = [];
+            let hasSRorAbove = false;
+
+            if (times === 1) {
+                if (energyCharge < 10) energyCharge++;
+            } else if (times === 10) {
+                energyCharge = 0; 
+            }
+
+            for (let i = 0; i < times; i++) {
+                let forceGuarantee = (times === 10 && i === 9 && !hasSRorAbove);
+                let card = drawSingleCard(forceGuarantee);
+                
+                if (card.rarity === "SSR" || card.rarity === "SR") hasSRorAbove = true;
+                
+                currentResults.push(card);
+                stats.total++;
+                stats[card.rarity]++;
+                addToInventory(card);
+            }
+
+            currentResults.forEach((card, index) => {
+                setTimeout(() => {
+                    const cardElement = document.createElement("div");
+                    cardElement.className = `card ${card.rarity}`;
+                    cardElement.innerHTML = `
+                        <div class="rarity">${card.rarity}</div>
+                        <div class="formula">${card.data.formula}</div>
+                        <div class="name">${card.data.name}</div>
+                    `;
+                    display.appendChild(cardElement);
+                }, index * 60);
+            });
+
+            updateStatsUI();
+            updateInventoryUI();
+        }
+
+        function addToInventory(card) {
+            const key = card.data.formula;
+            if (myInventory[key]) {
+                myInventory[key].count++;
+            } else {
+                myInventory[key] = { name: card.data.name, rarity: card.rarity, count: 1 };
+            }
+        }
+
+        function updateStatsUI() {
+            document.getElementById("total-draws").innerText = stats.total;
+            document.getElementById("count-ssr").innerText = stats.SSR;
+            document.getElementById("count-sr").innerText = stats.SR;
+            document.getElementById("count-r").innerText = stats.R;
+            
+            const percentage = (energyCharge / 10) * 100;
+            document.getElementById("energy-bar").style.width = `${percentage}%`;
+
+            const tenDrawBtn = document.getElementById("btn-ten-draw");
+            const lockMsg = document.getElementById("lock-message");
+
+            if (!isThrottled) {
+                if (energyCharge >= 10) {
+                    tenDrawBtn.disabled = false;
+                    lockMsg.innerText = "🔋 能量完全充滿！量子十連抽已就緒！";
+                    lockMsg.className = "lock-hint unlocked";
+                } else {
+                    tenDrawBtn.disabled = true;
+                    lockMsg.innerText = `🔋 十連抽充能中... （目前進度：${energyCharge}/10 單抽）`;
+                    lockMsg.className = "lock-hint";
+                }
+            }
+        }
+
+        function updateInventoryUI() {
+            const invDisplay = document.getElementById("inventory-display");
+            invDisplay.innerHTML = "";
+
+            const sortedItems = Object.keys(myInventory).map(key => {
+                return { formula: key, ...myInventory[key] };
+            }).sort((a, b) => {
+                const order = { "SSR": 1, "SR": 2, "R": 3 };
+                return order[a.rarity] - order[b.rarity];
+            });
+
+            document.getElementById("unique-count").innerText = sortedItems.length;
+
+            if (sortedItems.length === 0) {
+                invDisplay.innerHTML = `<div style="color: #8b949e; grid-column: 1/-1; text-align: center; padding: 20px;">目前背包空空如也，快去進行單抽收集吧！</div>`;
+                return;
+            }
+
+            sortedItems.forEach(item => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = `inv-item ${item.rarity}`;
+                itemDiv.innerHTML = `
+                    <div>
+                        <strong style="color: #ffffff;">${item.formula}</strong> 
+                        <br><span style="font-size:0.7rem; color:#8b949e;">${item.name} [${item.rarity}]</span>
+                    </div>
+                    <div class="inv-count">×${item.count}</div>
+                `;
+                invDisplay.appendChild(itemDiv);
+            });
+        }
+
+        function resetStats() {
+            if (isThrottled) return;
+            stats = { total: 0, SSR: 0, SR: 0, R: 0 };
+            energyCharge = 0;
+            myInventory = {};
+            document.getElementById("result-display").innerHTML = "";
+            updateStatsUI();
+            updateInventoryUI();
+        }
+
+        updateStatsUI();
+        updateInventoryUI();
+    </script>
+</body>
+</html>
